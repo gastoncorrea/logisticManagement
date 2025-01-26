@@ -29,4 +29,5 @@ def filterData(request):
     datos_seleccionados = datos_seleccionados.rename(columns={'Name':'Nro pedido','Billing Name': 'Nombre','Created at': 'Fecha','Lineitem name': 'Producto','Lineitem quantity': 'Cantidad','Billing Phone': 'Telefono','Billing City': 'Ciudad','Billing Address1': 'Direccion1', 'Billing Address2': 'Direccion2','Billing Zip': 'Codido postal'})
 
     data = datos_seleccionados.to_dict(orient='records')
-    return jsonify(data)
+    print("los datos son:", data[0])
+    return data

@@ -1,9 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text
-from datetime import datetime
-import csv
-import io
+from services.filterData import filterData
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/pedidos'
@@ -58,50 +55,7 @@ def index():
 
 @app.route("/upload", methods=["POST"])
 def uplodad_file():
-    if 'file' not in request.files:
-        return jsonify({"error":"No file part"}),400
-    file = request.files['file']
-    if file.filename == "":
-        return jsonify({"error":"No selected file"})
-
-    try:
-        #Leo archivo csv
-        file_contents = file.read().decode('utf-8')
-        csv_reader = csv.DictReader(io.StringIO(file_contents)) 
-        #proceso cada fila y la guardo
-        for row in csv_reader:
-            fecha = datetime.strptime(row['Fecha'], "%d/%m/%Y").strftime("%Y-%m-%d")
-
-             # Verificar si el campo 'Numero' está vacío antes de convertirlo a entero
-            if row['Telefono']:
-                telefono = int(row['Telefono'])
-            else:
-                telefono = None  # O cualquier valor por defecto que desees
-
-
-            nuevo_pedido = Pedido(
-                nro_pedido = row['nro_pedido'],
-                nombre_cliente = row['Nombre'],
-                email = row['Email'],
-                fecha = fecha,
-                producto = row['Producto'],
-                cantidad = int(row['Cantidad']),
-                telefono = telefono,
-                ciudad = row['Ciudad'],
-                direccion = row['Direccion1'],
-                direccion2 = row['Direccion2'],
-                cp = row['Codido postal']
-            )
-            db.session.add(nuevo_pedido)
-
-        #Guardo datos en base de datos
-        db.session.commit()
-
-        return jsonify({"message":"Pedidos cargados con exito"}), 200
-
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"error":str(e)}), 500
+   return filterData(request)
 
 @app.route('/')
 def recuper_pedidos():

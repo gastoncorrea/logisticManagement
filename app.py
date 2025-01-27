@@ -1,30 +1,14 @@
 from flask import Flask, jsonify, request
-from flask_sqlalchemy import SQLAlchemy
+from database import db
 from services.filterData import filterData
+from services.saveData import saveDataDb
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/pedidos'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/gestion_pedidos'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
+db.init(app)
 
-
-db = SQLAlchemy(app)
-
-class Pedido(db.Model):
-    __tablename__ = 'pedidos'
-
-    id = db.Column(db.Integer, primary_key=True)
-    nro_pedido = db.Column(db.String(10), nullable = False)
-    nombre_cliente = db.Column(db.String(50))
-    email = db.Column(db.String(50),nullable = False)
-    fecha = db.Column(db.Date, nullable = False)
-    producto = db.Column(db.String(100),nullable=False)
-    cantidad = db.Column(db.Integer, nullable=False)
-    telefono = db.Column(db.Integer)
-    ciudad = db.Column(db.String(50))
-    direccion = db.Column(db.String(50))
-    direccion2 = db.Column(db.String(50))
-    cp = db.Column(db.String(20))
 
 '''@app.route('/')
 def index():
@@ -55,7 +39,7 @@ def index():
 
 @app.route("/upload", methods=["POST"])
 def uplodad_file():
-   return filterData(request)
+   return saveDataDb(filterData(request))
 
 @app.route('/')
 def recuper_pedidos():

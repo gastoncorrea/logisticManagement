@@ -1,4 +1,4 @@
-from app import db, ForeignKey
+from database import db, ForeignKey
 
 class Product(db.Model):
 

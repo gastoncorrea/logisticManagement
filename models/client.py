@@ -1,5 +1,5 @@
 
-from app import db
+from database import db
 
 class Client(db.Model):
     __tablename__ = 'cliente'

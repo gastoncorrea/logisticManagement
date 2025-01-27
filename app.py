@@ -41,7 +41,7 @@ def index():
 def uplodad_file():
    return saveDataDb(filterData(request))
 
-@app.route('/')
+'''@app.route('/')
 def recuper_pedidos():
     mis_datos = Pedido.query.all()
     resultados = []
@@ -62,7 +62,7 @@ def recuper_pedidos():
             }
         )
     return jsonify(resultados)
-
+'''
 
 with app.app_context():
     db.create_all()

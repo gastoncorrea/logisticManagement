@@ -26,7 +26,7 @@ def filterData(request):
     datos['Created at'] = datos['Created at'].dt.strftime('%Y-%m-%d')
     columnas_seleccionadas = ['Name','Billing Name','Email','Created at','Lineitem name','Lineitem quantity','Billing Phone','Billing City','Billing Address1', 'Billing Address2','Billing Zip']
     datos_seleccionados = datos[columnas_seleccionadas]
-    datos_seleccionados = datos_seleccionados.rename(columns={'Name':'Nro pedido','Billing Name': 'Nombre','Created at': 'Fecha','Lineitem name': 'Producto','Lineitem quantity': 'Cantidad','Billing Phone': 'Telefono','Billing City': 'Ciudad','Billing Address1': 'Direccion1', 'Billing Address2': 'Direccion2','Billing Zip': 'Codido postal'})
+    datos_seleccionados = datos_seleccionados.rename(columns={'Name':'Nro pedido','Billing Name': 'Nombre','Created at': 'Fecha','Lineitem name': 'Producto','Lineitem quantity': 'Cantidad','Billing Phone': 'Telefono','Billing City': 'Ciudad','Billing Address1': 'Direccion1', 'Billing Address2': 'Direccion2','Billing Zip': 'Codigo postal'})
 
     data = datos_seleccionados.to_dict(orient='records')
     print("los datos son:", data[0])

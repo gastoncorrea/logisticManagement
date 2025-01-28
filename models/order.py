@@ -1,4 +1,7 @@
-from database import db, ForeignKey, relationship
+from database import db
+from sqlalchemy import  ForeignKey
+from sqlalchemy.orm import  relationship
+
 
 class Order(db.Model):
     __tablename__ = 'pedido'

@@ -27,7 +27,7 @@ def filterData(request):
     columnas_seleccionadas = ['Name','Billing Name','Email','Created at','Lineitem name','Lineitem quantity','Billing Phone','Billing City','Billing Address1', 'Billing Address2','Billing Zip']
     datos_seleccionados = datos[columnas_seleccionadas]
     datos_seleccionados = datos_seleccionados.rename(columns={'Name':'Nro pedido','Billing Name': 'Nombre','Created at': 'Fecha','Lineitem name': 'Producto','Lineitem quantity': 'Cantidad','Billing Phone': 'Telefono','Billing City': 'Ciudad','Billing Address1': 'Direccion1', 'Billing Address2': 'Direccion2','Billing Zip': 'Codigo postal'})
-
+    datos_seleccionados = datos_seleccionados.fillna("")
     data = datos_seleccionados.to_dict(orient='records')
     print("los datos son:", data[0])
     return data

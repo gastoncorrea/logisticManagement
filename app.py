@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from database import db
+from models.__init__ import Client, Product, Location, Order, OrderDetail
 from services.filterData import filterData
 from services.saveData import saveDataDb
 
@@ -40,6 +41,7 @@ def index():
 @app.route("/upload", methods=["POST"])
 def uplodad_file():
    return saveDataDb(filterData(request))
+  #return filterData(request)
 
 '''@app.route('/')
 def recuper_pedidos():

@@ -1,9 +1,5 @@
 from database import db
-from models.client import Client
-from models.product import Product
-from models.location import Location
-from models.order import Order
-from models.orderDetail import OrderDetail
+from models.__init__ import Client, Product, Location, Order, OrderDetail
 from flask import jsonify
 
 def saveDataDb(filteredData):
@@ -36,18 +32,18 @@ def saveDataDb(filteredData):
                 db.session.add(ubicacion)
                 db.session.commit()
             order = Order(
-                nro_pedido = orders['nro_pedido'],
+                nro_pedido = orders['Nro pedido'],
                 fecha = orders['Fecha'],
-                id_cliente = cliente.id_cliente,
-                id_ubicacion = ubicacion.id_ubicacion
+                Cliente_id_cliente = cliente.id_cliente,
+                Ubicacion_id_ubicacion = ubicacion.id_ubicacion
             )
             db.session.add(order)
             db.session.commit()
 
             orderDetail = OrderDetail(
                 cantidad = orders['Cantidad'],
-                id_producto = producto.id_producto,
-                id_pedido = order.id_pedido
+                Producto_id_producto = producto.id_producto,
+                Pedido_id_pedido = order.id_pedido
             )
             db.session.add(orderDetail)
             db.session.commit()
@@ -61,8 +57,8 @@ def saveDataDb(filteredData):
 
             orderDetail = OrderDetail(
                 cantidad = orders['Cantidad'],
-                id_producto = producto.id_producto,
-                id_pedido = order.id_pedido
+                Producto_id_producto = producto.id_producto,
+                Pedido_id_pedido = order.id_pedido
             )
             db.session.add(orderDetail)
             db.session.commit()
@@ -73,8 +69,11 @@ def saveDataDb(filteredData):
 
 
 def verificar_existencia(pedido):
+    ubicacion = None
+    print(f"ciudad:{pedido.get('Ciudad')} , direccion:{pedido.get('Direccion1')}")
+    if pedido.get('Ciudad') and pedido.get('Direccion1') and pedido.get('Codigo postal'):
+        ubicacion = Location.query.filter_by(localidad=pedido['Ciudad'],direccion=pedido['Direccion1'],codigo_postal=pedido['Codigo postal']).first()
     cliente = Client.query.filter_by(email=pedido['Email']).first()
-    producto = Product.query.filter_by(nombre_producto=pedido['Producto'])
-    ubicacion = Location.query.filter_by(localidad=pedido['Ciudad'],direccion=pedido['Direccion1'],codigo_postal=pedido['Codigo postal'])
-    order = Order.query.filter_by(nro_pedido=pedido['nro_pedido'])
+    producto = Product.query.filter_by(nombre_producto=pedido['Producto']).first()
+    order = Order.query.filter_by(nro_pedido=pedido['Nro pedido']).first()
     return cliente,producto,ubicacion,order

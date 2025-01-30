@@ -5,6 +5,8 @@ from flask import jsonify
 def saveDataDb(filteredData):
     #tengo que guardar los datos en la base de datos si es que no existen, si ya existen solo debo tomar sus id y ponerlo en el detalle de pedido o pedido
     #si no existe guardar cliente, sino tomar el id
+    registros_guardados = 0
+    registros_duplicados = 0
     for orders in filteredData:
         cliente,producto,ubicacion,order = verificar_existencia(orders)
         if not order:
@@ -47,6 +49,7 @@ def saveDataDb(filteredData):
             )
             db.session.add(orderDetail)
             db.session.commit()
+            registros_guardados+=1
         else:
             if not producto:
                 producto = Product(
@@ -55,24 +58,25 @@ def saveDataDb(filteredData):
                 db.session.add(producto)
                 db.session.commit()
 
-            orderDetail = OrderDetail(
+                orderDetail = OrderDetail(
                 cantidad = orders['Cantidad'],
                 Producto_id_producto = producto.id_producto,
                 Pedido_id_pedido = order.id_pedido
-            )
-            db.session.add(orderDetail)
-            db.session.commit()
-    return "Datos guardados correctamente"
+                )
+                db.session.add(orderDetail)
+                db.session.commit()
+                registros_guardados+=1
+            else:
+                registros_duplicados+=1
+                
+    return f"Datos guardados correctamente: {registros_guardados}--- Registros duplicados: {registros_duplicados}"
 
 
        
 
 
 def verificar_existencia(pedido):
-    ubicacion = None
-    print(f"ciudad:{pedido.get('Ciudad')} , direccion:{pedido.get('Direccion1')}")
-    if pedido.get('Ciudad') and pedido.get('Direccion1') and pedido.get('Codigo postal'):
-        ubicacion = Location.query.filter_by(localidad=pedido['Ciudad'],direccion=pedido['Direccion1'],codigo_postal=pedido['Codigo postal']).first()
+    ubicacion = Location.query.filter_by(localidad=pedido['Ciudad'],direccion=pedido['Direccion1'],codigo_postal=pedido['Codigo postal']).first()
     cliente = Client.query.filter_by(email=pedido['Email']).first()
     producto = Product.query.filter_by(nombre_producto=pedido['Producto']).first()
     order = Order.query.filter_by(nro_pedido=pedido['Nro pedido']).first()

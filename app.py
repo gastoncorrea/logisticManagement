@@ -11,61 +11,30 @@ app.config['SQLALCHEMY_ECHO'] = True
 db.init_app(app)
 
 
-'''@app.route('/')
-def index():
-    try:
-        # prueba de guardar un registro en base de datos
-        nuevo_pedido = Pedido(
-
-            nro_pedido = "#2479",
-            nombre_cliente = "Edmundo Correa",
-            email = "edmundo@gmail.com",
-            fecha = datetime.strptime("2025-01-12","%Y-%m-%d").date(),
-            producto = "parabrisas",
-            cantidad = 1,
-            telefono = 344521,
-            ciudad = "CABA",
-            direccion = "San Martin 54",
-            direccion2 = "",
-            cp = 4000
-        )
-        db.session.add(nuevo_pedido)
-        db.session.commit()
-        print("Pedido guardado con exito: Id ",nuevo_pedido.id)
-        return "Registro guardado"
-    except Exception as e:
-        db.session.rollback()
-        return f"Error en la conexión: {e}"
-'''
-
 @app.route("/upload", methods=["POST"])
 def uplodad_file():
    return saveDataDb(filterData(request))
   #return filterData(request)
 
-'''@app.route('/')
+@app.route('/')
 def recuper_pedidos():
-    mis_datos = Pedido.query.all()
+    mis_datos = Order.query.all()
     resultados = []
     for registro in mis_datos:
         resultados.append({
-            'id' : registro.id,
+            'id_pedido' : registro.id_pedido,
             'nro_pedido' : registro.nro_pedido,
-            'nombre_cliente' : registro.nombre_cliente,
-            'email' : registro.email,
             'fecha' : registro.fecha,
-            'producto' : registro.producto,
-            'cantidad' : registro.cantidad,
-            'telefono' : registro.telefono,
-            'ciudad' : registro.ciudad,
-            'direccion' : registro.direccion,
-            'direccion2' : registro.direccion2,
-            'cp' : registro.cp
+            'id_cliente' : registro.Cliente_id_cliente,
+            'id_ubicacion' : registro.Ubicacion_id_ubicacion,
             }
         )
     return jsonify(resultados)
-'''
 
-
+@app.route('/<int:id>')
+def recuperar_detalle_pedidos(id):
+    detalle_pedido = OrderDetail.query.filter_by(Pedido_id_pedido=id).all()
+    detalle = [{'id_detalle_pedido': orderDetail.id_Detalle_Pedido, 'id_producto': orderDetail.Producto_id_producto, 'cantidad': orderDetail.cantidad} for orderDetail in detalle_pedido]
+    return jsonify(detalle)
 with app.app_context():
     db.create_all()

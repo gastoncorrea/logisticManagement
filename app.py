@@ -66,5 +66,6 @@ def recuper_pedidos():
     return jsonify(resultados)
 '''
 
+
 with app.app_context():
     db.create_all()

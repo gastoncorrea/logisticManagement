@@ -1,4 +1,5 @@
 from database import db
+from sqlalchemy.orm import  relationship
 
 class Product(db.Model):
 
@@ -6,3 +7,5 @@ class Product(db.Model):
 
     id_producto = db.Column(db.Integer, primary_key=True, autoincrement = True)
     nombre_producto = db.Column(db.String(100), nullable=False)
+
+    detalles = relationship("OrderDetail", back_populates = "producto")

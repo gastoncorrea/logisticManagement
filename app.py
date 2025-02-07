@@ -40,7 +40,7 @@ def recuper_pedidos():
 @app.route('/<int:id>')
 def recuperar_detalle_pedidos(id):
     detalle_pedido = OrderDetail.query.filter_by(Pedido_id_pedido=id).all()
-    detalle = [{'id_detalle_pedido': orderDetail.id_Detalle_Pedido, 'id_producto': orderDetail.Producto_id_producto, 'cantidad': orderDetail.cantidad} for orderDetail in detalle_pedido]
+    detalle = [{'id_detalle_pedido': orderDetail.id_Detalle_Pedido, 'producto': orderDetail.producto.nombre_producto, 'cantidad': orderDetail.cantidad} for orderDetail in detalle_pedido]
     return jsonify(detalle)
 with app.app_context():
     db.create_all()

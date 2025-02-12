@@ -1,4 +1,5 @@
 from database import db
+from sqlalchemy.orm import  relationship
 
 class Location(db.Model):
     __tablename__ = 'ubicacion'
@@ -8,3 +9,5 @@ class Location(db.Model):
     direccion = db.Column(db.String(100),nullable=False)
     direccion2 = db.Column(db.String(100),nullable=True)
     codigo_postal = db.Column(db.String(15),nullable=False)
+
+    #pedido = relationship('Order', back_populates='ubicacion')

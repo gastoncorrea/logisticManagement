@@ -24,15 +24,17 @@ def recuper_pedidos():
     mis_datos = Order.query.all()
     resultados = []
     for registro in mis_datos:
-        cliente = Client.query.filter_by(id_cliente = registro.Cliente_id_cliente ).first()
-        ubicacion = Location.query.filter_by(id_ubicacion = registro.Ubicacion_id_ubicacion).first()
-        if cliente and ubicacion:
             resultados.append({
                 'id_pedido' : registro.id_pedido,
                 'nro_pedido' : registro.nro_pedido,
                 'fecha' : registro.fecha.strftime('%Y-%m-%d'),
-                'id_cliente' : cliente.nombre,
-                'id_ubicacion' : ubicacion.localidad
+                'nombre_cliente' : registro.cliente.nombre,
+                'email':registro.cliente.email,
+                'telefono':registro.cliente.telefono,
+                'localidad' : registro.ubicacion.localidad,
+                'direccion': registro.ubicacion.direccion,
+                'direccion2': registro.ubicacion.direccion2,
+                'cp': registro.ubicacion.codigo_postal
                 }
             )
     return jsonify(resultados)

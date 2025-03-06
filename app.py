@@ -29,9 +29,9 @@ def recuper_pedidos():
                 'nro_pedido' : registro.nro_pedido,
                 'fecha' : registro.fecha.strftime('%Y-%m-%d'),
                 'nombre_cliente' : registro.cliente.nombre,
-                'email':registro.cliente.email,
+                #'email':registro.cliente.email,
                 'telefono':registro.cliente.telefono,
-                'localidad' : registro.ubicacion.localidad,
+                'provincia' : registro.ubicacion.provincia,
                 'direccion': registro.ubicacion.direccion,
                 'direccion2': registro.ubicacion.direccion2,
                 'cp': registro.ubicacion.codigo_postal

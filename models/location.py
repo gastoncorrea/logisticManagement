@@ -7,7 +7,6 @@ class Location(db.Model):
     id_ubicacion = db.Column(db.Integer, primary_key=True,autoincrement = True)
     provincia = db.Column(db.String(100),nullable=False)
     direccion = db.Column(db.String(100),nullable=False)
-    direccion2 = db.Column(db.String(100),nullable=True)
     codigo_postal = db.Column(db.String(15),nullable=False)
 
     #pedido = relationship('Order', back_populates='ubicacion')

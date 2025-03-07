@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from database import db
-from models.__init__ import Client, Product, Location, Order, OrderDetail
+from models.__init__ import Client, Product, Location, Order, OrderDetail,Track
 from services.filterData import filterData
 from services.saveData import saveDataDb
 
@@ -21,20 +21,20 @@ def uplodad_file():
 
 @app.route('/')
 def recuper_pedidos():
-    mis_datos = Order.query.all()
+    mis_datos = Track.query.all()
     resultados = []
     for registro in mis_datos:
+        if registro.estado == "En proceso":
             resultados.append({
-                'id_pedido' : registro.id_pedido,
-                'nro_pedido' : registro.nro_pedido,
-                'fecha' : registro.fecha.strftime('%Y-%m-%d'),
-                'nombre_cliente' : registro.cliente.nombre,
+                'id_pedido' : registro.pedido.id_pedido,
+                'nro_pedido' : registro.pedido.nro_pedido,
+                'fecha' : registro.pedido.fecha.strftime('%Y-%m-%d'),
+                'nombre_cliente' : registro.pedido.cliente.nombre,
                 #'email':registro.cliente.email,
-                'telefono':registro.cliente.telefono,
-                'provincia' : registro.ubicacion.provincia,
-                'direccion': registro.ubicacion.direccion,
-                'direccion2': registro.ubicacion.direccion2,
-                'cp': registro.ubicacion.codigo_postal
+                'provincia' : registro.pedido.ubicacion.provincia,
+                'direccion': registro.pedido.ubicacion.direccion,
+                'cp': registro.pedido.ubicacion.codigo_postal,
+                'estado': registro.estado
                 }
             )
     return jsonify(resultados)

@@ -1,6 +1,6 @@
 from database import db
-from models.__init__ import Client, Product, Location, Order, OrderDetail
-from flask import jsonify
+from models.__init__ import Client, Product, Location, Order, OrderDetail, Track
+from datetime import datetime
 
 def saveDataDb(filteredData):
     #tengo que guardar los datos en la base de datos si es que no existen, si ya existen solo debo tomar sus id y ponerlo en el detalle de pedido o pedido
@@ -36,7 +36,6 @@ def saveDataDb(filteredData):
                 ubicacion = Location(
                     provincia = orders['Ciudad'],
                     direccion = orders['Direccion1'],
-                    #direccion2 = orders['Direccion2'],
                     codigo_postal = orders['Codigo postal']
                 )
                 db.session.add(ubicacion)
@@ -57,6 +56,15 @@ def saveDataDb(filteredData):
             )
             db.session.add(orderDetail)
             db.session.commit()
+            
+            track = Track(
+                fecha = datetime.now(),
+                estado = "En proceso",
+                Pedido_id_pedido = order.id_pedido
+            )
+            db.session.add(track)
+            db.session.commit()
+            
             registros_guardados+=1
         else:
             if not producto:

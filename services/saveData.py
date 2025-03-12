@@ -1,3 +1,4 @@
+from flask import jsonify
 from database import db
 from models.__init__ import Client, Product, Location, Order, OrderDetail, Track
 from datetime import datetime
@@ -99,7 +100,11 @@ def saveDataDb(filteredData):
                     registros_duplicados+=1
                     print(f"prducto repetido: {producto} se compara con este del excel: {orders['Producto']}")
                 
-    return f"Datos guardados correctamente: {registros_guardados}--- Registros duplicados: {registros_duplicados} ---Ver{ver_duplicados}"
+    return jsonify({
+        "mensaje": "Datos guardados correctamente",
+        "guardados": registros_guardados,
+        "duplicados": registros_duplicados
+    })
 
 
        

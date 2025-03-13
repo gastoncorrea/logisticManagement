@@ -19,7 +19,7 @@ def filterData(request):
     datos = datos.dropna(subset=['FECHA'])
     datos['CANTIDAD'].replace([np.nan, np.inf, -np.inf], 0, inplace=True)
     datos['CANTIDAD'] = datos['CANTIDAD'].astype(int)
-    columnas_seleccionadas = ['FECHA','NRO DE PEDIDO','NOMBRE','CANTIDAD','Producto','PROVINCIA','DIRECCION', 'CP','NUMERO']
+    columnas_seleccionadas = ['FECHA','NRO DE PEDIDO','NOMBRE','CANTIDAD','Producto','PROVINCIA','DIRECCION', 'CP','NUMERO','MAIL']
     datos_seleccionados = datos[columnas_seleccionadas]
     datos_seleccionados = datos_seleccionados.rename(columns={
         'NRO DE PEDIDO': 'Nro pedido',
@@ -30,7 +30,8 @@ def filterData(request):
         'NUMERO': 'Telefono',
         'PROVINCIA': 'Ciudad',
         'DIRECCION': 'Direccion1',
-        'CP': 'Codigo postal'
+        'CP': 'Codigo postal',
+        'MAIL':'Email'
     })
     
     datos_seleccionados = datos_seleccionados.fillna("")

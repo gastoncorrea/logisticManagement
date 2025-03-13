@@ -1,11 +1,14 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from flask_mail import Mail
 from database import db
 import os
 from dotenv import load_dotenv
 from models.__init__ import Client, Product, Location, Order, OrderDetail,Track
 from services.filterData import filterData
 from services.saveData import saveDataDb
+from services.sendMail import mail
+
 
 
 app = Flask(__name__)
@@ -29,6 +32,9 @@ app.config["MAIL_PASSWORD"] = MAIL_PASSWORD
 app.config["MAIL_DEFAULT_SENDER"] = MAIL_DEFAULT_SENDER
 db.init_app(app)
 CORS(app)
+
+mail.init_app(app)
+
 
 
 @app.route("/upload", methods=["POST"])

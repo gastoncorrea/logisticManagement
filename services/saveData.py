@@ -2,6 +2,7 @@ from flask import jsonify
 from database import db
 from models.__init__ import Client, Product, Location, Order, OrderDetail, Track
 from datetime import datetime
+from services.sendMail import send_mails
 
 def saveDataDb(filteredData):
     #tengo que guardar los datos en la base de datos si es que no existen, si ya existen solo debo tomar sus id y ponerlo en el detalle de pedido o pedido
@@ -22,7 +23,7 @@ def saveDataDb(filteredData):
             if not cliente:
                 cliente = Client(
                     nombre=orders['Nombre'],
-                    #email=orders['Email'],
+                    email=orders['Email'],
                     telefono=orders['Telefono']
                 )
                 db.session.add(cliente)
@@ -65,6 +66,8 @@ def saveDataDb(filteredData):
             )
             db.session.add(track)
             db.session.commit()
+            print("****ESTO CONTIENE ORDER ANTES DE MANDAR EL EMAIL: ",order)
+            send_mails(order)
             
             registros_guardados+=1
         else:

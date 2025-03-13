@@ -1,15 +1,32 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from database import db
+import os
+from dotenv import load_dotenv
 from models.__init__ import Client, Product, Location, Order, OrderDetail,Track
 from services.filterData import filterData
 from services.saveData import saveDataDb
 
 
 app = Flask(__name__)
+
+load_dotenv()  # Carga las variables del .env
+
+MAIL_USERNAME = os.getenv("MAIL_USERNAME")
+MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
+MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER")
+
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/gestion_pedidos'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
+# Configuración del servidor SMTP
+app.config["MAIL_SERVER"] = "smtp.gmail.com"
+app.config["MAIL_PORT"] = 587
+app.config["MAIL_USE_TLS"] = True
+app.config["MAIL_USERNAME"] = MAIL_USERNAME
+app.config["MAIL_PASSWORD"] = MAIL_PASSWORD
+app.config["MAIL_DEFAULT_SENDER"] = MAIL_DEFAULT_SENDER
 db.init_app(app)
 CORS(app)
 

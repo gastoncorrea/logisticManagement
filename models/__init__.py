@@ -4,3 +4,4 @@ from .order import Order
 from .orderDetail import OrderDetail
 from .product import Product
 from .track import Track
+from .rider import Rider

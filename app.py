@@ -52,72 +52,56 @@ def recuper_pedidos():
     entregados = []
     en_camino = []
     en_proceso = []
-    
+
+    # Función para verificar si un pedido ya está en alguna lista
+    def pedido_existe(id_pedido):
+        return any(p['id_pedido'] == id_pedido for p in no_entregados + entregados + en_camino + en_proceso)
+
     for registro in mis_datos[::-1]:
         pedido = registro.pedido
-        estado = registro.estado.lower() 
-        
+        estado = registro.estado.lower()
+
+        # Si el pedido ya está en alguna lista, lo ignoramos
+        if pedido_existe(pedido.id_pedido):
+            continue
+
+        pedido_data = {
+            'id_pedido': pedido.id_pedido,
+            'nro_pedido': pedido.nro_pedido,
+            'fecha': pedido.fecha.strftime('%Y-%m-%d'),
+            'nombre_cliente': pedido.cliente.nombre,
+            'email': pedido.cliente.email,
+            'provincia': pedido.ubicacion.provincia,
+            'direccion': pedido.ubicacion.direccion,
+            'cp': pedido.ubicacion.codigo_postal,
+            'estado': registro.estado
+        }
+
         if estado == "no entregado":
-                no_entregados.append({
-                'id_pedido': pedido.id_pedido,
-                'nro_pedido': pedido.nro_pedido,
-                'fecha': pedido.fecha.strftime('%Y-%m-%d'),
-                'nombre_cliente': pedido.cliente.nombre,
-                'email': pedido.cliente.email,
-                'provincia': pedido.ubicacion.provincia,
-                'direccion': pedido.ubicacion.direccion,
-                'cp': pedido.ubicacion.codigo_postal,
-                'estado': registro.estado
-                })
-                mis_datos.remove(registro)
+            no_entregados.append(pedido_data)
         elif estado == "entregado":
-                entregados.append({
-                'id_pedido': pedido.id_pedido,
-                'nro_pedido': pedido.nro_pedido,
-                'fecha': pedido.fecha.strftime('%Y-%m-%d'),
-                'nombre_cliente': pedido.cliente.nombre,
-                'email': pedido.cliente.email,
-                'provincia': pedido.ubicacion.provincia,
-                'direccion': pedido.ubicacion.direccion,
-                'cp': pedido.ubicacion.codigo_postal,
-                'estado': registro.estado
-                })
-                mis_datos.remove(registro)
+            entregados.append(pedido_data)
         elif estado == "en camino":
-                en_camino.append({
-                'id_pedido': pedido.id_pedido,
-                'nro_pedido': pedido.nro_pedido,
-                'fecha': pedido.fecha.strftime('%Y-%m-%d'),
-                'nombre_cliente': pedido.cliente.nombre,
-                'email': pedido.cliente.email,
-                'provincia': pedido.ubicacion.provincia,
-                'direccion': pedido.ubicacion.direccion,
-                'cp': pedido.ubicacion.codigo_postal,
-                'estado': registro.estado
-                })
-                mis_datos.remove(registro)
-        elif estado == "en proceso":
-            en_proceso.append({
-                'id_pedido': pedido.id_pedido,
-                'nro_pedido': pedido.nro_pedido,
-                'fecha': pedido.fecha.strftime('%Y-%m-%d'),
-                'nombre_cliente': pedido.cliente.nombre,
-                'email': pedido.cliente.email,
-                'provincia': pedido.ubicacion.provincia,
-                'direccion': pedido.ubicacion.direccion,
-                'cp': pedido.ubicacion.codigo_postal,
-                'estado': registro.estado
-                })
+            en_camino.append(pedido_data)
             mis_datos.remove(registro)
-        # Crear el diccionario final con las listas clasificadas
+        elif estado == "en proceso":
+            en_proceso.append(pedido_data)
+            mis_datos.remove(registro)
+            
+    no_entregados = sorted(no_entregados, key=lambda x: x['id_pedido'])
+    entregados = sorted(entregados, key=lambda x: x['id_pedido'])
+    en_camino = sorted(en_camino, key=lambda x: x['id_pedido'])
+    en_proceso = sorted(en_proceso, key=lambda x: x['id_pedido'])
+
+    # Crear el diccionario final con las listas clasificadas
     resultados = {
         "no_entregados": no_entregados,
         "entregados": entregados,
         "en_camino": en_camino,
         "en_proceso": en_proceso
     }
+
     print(resultados)
-    # Devolver los resultados en formato JSON
     return jsonify(resultados)
 
 @app.route('/detail/<int:id>')

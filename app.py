@@ -82,7 +82,18 @@ def recuper_pedidos(estado):
         elif estado_registro == "entregado":
             entregados.append(pedido_data)
         elif estado_registro == "en camino":
-            en_camino.append(pedido_data)
+            lista_envios = Shipping.query.filter_by(id_pedido=pedido.id_pedido).first()
+            pedido = lista_envios.pedido
+            datos_envio = {
+                "id_pedido": pedido.id_pedido,
+                "nro_pedido": pedido.nro_pedido,
+                "fecha_envio": lista_envios.fecha,
+                "rider": lista_envios.rider.email,
+                "direccion": pedido.ubicacion.direccion,
+                "codigo_postal": pedido.ubicacion.codigo_postal,
+                "estado": registro.estado
+            }
+            en_camino.append(datos_envio)
             mis_datos.remove(registro)
         elif estado_registro == "en proceso":
             en_proceso.append(pedido_data)

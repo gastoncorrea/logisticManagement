@@ -43,8 +43,8 @@ def uplodad_file():
    return saveDataDb(filterData(request))
   #return filterData(request)
 
-@app.route('/')
-def recuper_pedidos():
+@app.route('/pedidos/<estado>', methods=['GET'])
+def recuper_pedidos(estado):
     mis_datos = Track.query.all()
     
     # Inicializamos las listas para cada estado
@@ -59,7 +59,7 @@ def recuper_pedidos():
 
     for registro in mis_datos[::-1]:
         pedido = registro.pedido
-        estado = registro.estado.lower()
+        estado_registro = registro.estado.lower()
 
         # Si el pedido ya está en alguna lista, lo ignoramos
         if pedido_existe(pedido.id_pedido):
@@ -77,14 +77,14 @@ def recuper_pedidos():
             'estado': registro.estado
         }
 
-        if estado == "no entregado":
+        if estado_registro == "no entregado":
             no_entregados.append(pedido_data)
-        elif estado == "entregado":
+        elif estado_registro == "entregado":
             entregados.append(pedido_data)
-        elif estado == "en camino":
+        elif estado_registro == "en camino":
             en_camino.append(pedido_data)
             mis_datos.remove(registro)
-        elif estado == "en proceso":
+        elif estado_registro == "en proceso":
             en_proceso.append(pedido_data)
             mis_datos.remove(registro)
             
@@ -93,16 +93,18 @@ def recuper_pedidos():
     en_camino = sorted(en_camino, key=lambda x: x['id_pedido'])
     en_proceso = sorted(en_proceso, key=lambda x: x['id_pedido'])
 
-    # Crear el diccionario final con las listas clasificadas
-    resultados = {
-        "no_entregados": no_entregados,
-        "entregados": entregados,
-        "en_camino": en_camino,
-        "en_proceso": en_proceso
-    }
+    listas = {
+        "in-progress": sorted(en_proceso, key=lambda x: x['id_pedido']),
+        "sent": sorted(en_camino, key=lambda x: x['id_pedido']),
+        "delivered": sorted(entregados, key=lambda x: x['id_pedido']),
+        "not-delivered": sorted(no_entregados, key=lambda x: x['id_pedido'])
+        }
 
-    print(resultados)
-    return jsonify(resultados)
+    # Retorna la lista correspondiente o un error si el estado no es válido
+    if estado in listas:
+        return jsonify(listas[estado])
+    else:
+        return jsonify({"error": "Estado no válido"}), 400
 
 @app.route('/detail/<int:id>')
 def recuperar_detalle_pedidos(id):

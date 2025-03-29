@@ -195,5 +195,22 @@ def detalle_envio(id):
     }
     return jsonify(envio_encontrado)
 
+@app.route('/riders', methods=['POST'])
+def create_rider():
+    rider = request.get_json()
+    
+    save_rider = Rider(
+        nombre = rider['nombre'],
+        apellido = rider['apellido'],
+        email = rider['email'],
+        dni = rider['dni'],
+        vehiculo = rider['vehiculo'],
+        cedula_verde = rider['cedula']
+    )
+    db.session.add(save_rider)
+    db.session.commit()
+    
+    return jsonify({'message': 'Rider creado exitosamente', 'id_rider': save_rider.id_rider}), 201
+
 with app.app_context():
     db.create_all()

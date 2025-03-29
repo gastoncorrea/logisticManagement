@@ -181,6 +181,19 @@ def create_shipping():
     db.session.commit()
      # Responder con un mensaje de éxito
     return jsonify({'message': 'Envío creado exitosamente', 'id_envio': shipping.id_envio}), 201
-    
+
+@app.route('/shipping/data/<int:id>')
+def detalle_envio(id):
+    envio = Shipping.query.filter_by(id_pedido = id).first()
+    envio_encontrado = {
+        "id_envio": envio.id_envio,
+        "fecha_envio": envio.fecha,
+        "rider": envio.rider.email,
+        "provincia": envio.pedido.ubicacion.provincia,
+        "direccion": envio.pedido.ubicacion.direccion,
+        "codigo_postal": envio.pedido.ubicacion.codigo_postal
+    }
+    return jsonify(envio_encontrado)
+
 with app.app_context():
     db.create_all()

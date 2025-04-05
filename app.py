@@ -132,7 +132,7 @@ def recuperar_un_pedido(id):
     }
     return jsonify(enviar_pedido)
 
-@app.route('/riders')
+@app.route('/riders/get')
 def recuperar_riders():
     find_riders = Rider.query.all()
     riders = []
@@ -143,6 +143,7 @@ def recuperar_riders():
             'apellido': rider.apellido,
             'email': rider.email,
             'dni': rider.dni,
+            'vehiculo': rider.vehiculo
         })
     return jsonify(riders)   
         
@@ -195,7 +196,7 @@ def detalle_envio(id):
     }
     return jsonify(envio_encontrado)
 
-@app.route('/riders', methods=['POST'])
+@app.route('/riders/save', methods=['POST'])
 def create_rider():
     rider = request.get_json()
     
@@ -211,6 +212,22 @@ def create_rider():
     db.session.commit()
     
     return jsonify({'message': 'Rider creado exitosamente', 'id_rider': save_rider.id_rider}), 201
+
+@app.route('/riders/shipping/<int:id>')
+def find_orders(id):
+    orders = Shipping.query.filter_by(id_rider=id).all()
+    print("Id pedido",id)
+    print("Lista de envios:", orders)
+    orders_finded = []
+    
+    for order in orders:
+        orders_finded.append({
+            'nro_pedido': order.pedido.nro_pedido,
+            'provincia': order.pedido.ubicacion.provincia,
+            'codigo_postal': order.pedido.ubicacion.codigo_postal
+        })
+        
+    return jsonify(orders_finded)
 
 with app.app_context():
     db.create_all()

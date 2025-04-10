@@ -12,6 +12,8 @@ class Track(db.Model):
     entrega_dni = db.Column(db.String(20))
     entrega_nombre = db.Column(db.String(20))
     descripcion = db.Column(db.String(100))
+    id_rider = db.Column(db.Integer(), ForeignKey("riders.id_rider"))
     Pedido_id_pedido = db.Column(db.Integer(), ForeignKey("pedido.id_pedido"))
     
     pedido = relationship('Order')
+    riders = relationship('Rider')

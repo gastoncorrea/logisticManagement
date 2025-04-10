@@ -80,7 +80,17 @@ def recuper_pedidos(estado):
         if estado_registro == "no entregado":
             no_entregados.append(pedido_data)
         elif estado_registro == "entregado":
-            entregados.append(pedido_data)
+            delivered_data = {
+                "id_pedido": pedido.id_pedido,
+                "nro_pedido": pedido.nro_pedido,
+                "fecha_entrega": registro.fecha,
+                "recibe_dni": registro.entrega_dni,
+                "recibe_nombre": registro.entrega_nombre,
+                "rider_nombre": registro.id_rider,
+                "descripcion_entrega": registro.descripcion,
+                "estado": estado_registro
+            }
+            entregados.append(delivered_data)
         elif estado_registro == "en camino":
             lista_envios = Shipping.query.filter_by(id_pedido=pedido.id_pedido).first()
             pedido = lista_envios.pedido
@@ -192,9 +202,22 @@ def detalle_envio(id):
         "rider": envio.rider.email,
         "provincia": envio.pedido.ubicacion.provincia,
         "direccion": envio.pedido.ubicacion.direccion,
-        "codigo_postal": envio.pedido.ubicacion.codigo_postal
+        "codigo_postal": envio.pedido.ubicacion.codigo_postal,
     }
     return jsonify(envio_encontrado)
+
+@app.route('/shipping/find/<int:id>')
+def find_shipping(id):
+    shipping = Shipping.query.filter_by(id_envio = id).first()
+    if not shipping:
+        return jsonify({'error':'No existe el registro'})
+    one_shipping = {
+        "id_rider": shipping.rider.id_rider,
+        "rider": shipping.rider.email,
+        "nro_pedido": shipping.pedido.nro_pedido
+    }
+    
+    return jsonify(one_shipping)
 
 @app.route('/riders/save', methods=['POST'])
 def create_rider():
@@ -214,7 +237,7 @@ def create_rider():
     return jsonify({'message': 'Rider creado exitosamente', 'id_rider': save_rider.id_rider}), 201
 
 @app.route('/riders/shipping/<int:id>')
-def find_orders(id):
+def pedido_enviado_por_rider(id):
     orders = Shipping.query.filter_by(id_rider=id).all()
     print("Id pedido",id)
     print("Lista de envios:", orders)
@@ -228,6 +251,36 @@ def find_orders(id):
         })
         
     return jsonify(orders_finded)
+
+@app.route('/delivered/save', methods=['POST'])
+def crear_entrega_pedido():
+    datos_entrega = request.get_json()
+    print(datos_entrega)
+    if not datos_entrega['entrega_dni'] or not datos_entrega['entrega_nombre'] or not datos_entrega['entrega_rider']:
+        return jsonify({'error':'Campos requeridos faltantes'}), 400
+    
+    order = Order.query.filter_by(nro_pedido = datos_entrega['nro_pedido']).first()
+    if not order:
+        return jsonify({'error':'Pedido no encontrado'}), 404
+    
+    rider = Rider.query.filter_by(id_rider = datos_entrega['entrega_rider']).first()
+    if not rider:
+        return jsonify({'error':'Rider no encontrado'})
+    
+    guardar_entrega = Track(
+        fecha = datetime.now(),
+        estado = "Entregado",
+        entrega_dni = datos_entrega['entrega_dni'],
+        entrega_nombre = datos_entrega['entrega_nombre'],
+        descripcion = datos_entrega['descripcion'],
+        id_rider = rider.id_rider,
+        Pedido_id_pedido = order.id_pedido
+    )
+    db.session.add(guardar_entrega)
+    db.session.commit()
+    
+    return jsonify({'message':'Entrega creada con exito'}), 201
+    
 
 with app.app_context():
     db.create_all()

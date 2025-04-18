@@ -26,3 +26,26 @@ def send_mails(pedido):
             print(f"Correo enviado a: {pedido.cliente.email}")
 
     return "Correos enviados"
+
+def send_mail_shipping(pedido):
+    
+    with mail.connect() as conn:
+            msg = Message(
+                subject="Se entregara hoy su Pedido",
+                recipients=["sgarcia90.912@gmail.com"],
+                body=f"""
+                Hola {pedido.cliente.nombre},
+
+                Tu pedido número {pedido.nro_pedido} será entregado hoy por uno de nuestros riders
+                a la dirección proporcionada.
+
+                ¡Gracias por tu compra!
+
+                Saludos,
+                SkyFlex Logistica
+                """
+            )
+            conn.send(msg)
+            print(f"Correo enviado a: {pedido.cliente.email}")
+
+    return f"Correos enviados a: {pedido.cliente.email}"

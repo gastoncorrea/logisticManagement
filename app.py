@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from models.__init__ import Client, Shipping, Rider, Order, OrderDetail,Track
 from services.filterData import filterData
 from services.saveData import saveDataDb
-from services.sendMail import mail
+from services.sendMail import mail, send_mail_delivered
 from services.saveShipping import saveShippingData
 from datetime import datetime
 
@@ -238,7 +238,7 @@ def crear_entrega_pedido():
     
     rider = Rider.query.filter_by(id_rider = datos_entrega['entrega_rider']).first()
     if not rider:
-        return jsonify({'error':'Rider no encontrado'})
+        return jsonify({'error':'Rider no encontrado'}),404
     
     guardar_entrega = Track(
         fecha = datetime.now(),
@@ -250,9 +250,10 @@ def crear_entrega_pedido():
         Pedido_id_pedido = order.id_pedido
     )
     db.session.add(guardar_entrega)
+    envio = send_mail_delivered(order, guardar_entrega)
     db.session.commit()
     
-    return jsonify({'message':'Entrega creada con exito'}), 201
+    return jsonify({'message':'Entrega creada con exito', 'email': envio}), 201
     
 
 with app.app_context():

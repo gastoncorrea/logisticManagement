@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from models.__init__ import Client, Shipping, Rider, Order, OrderDetail,Track
 from services.filterData import filterData
 from services.saveData import saveDataDb
-from services.sendMail import mail, send_mail_delivered
+from services.sendMail import mail, send_mail_delivered,send_mail_not_delivered
 from services.saveShipping import saveShippingData
 from datetime import datetime
 
@@ -79,7 +79,15 @@ def recuper_pedidos(estado):
         }
 
         if estado_registro == "no entregado":
-            no_entregados.append(pedido_data)
+            not_delivered_data = {
+                "id_pedido": pedido.id_pedido,
+                "nro_pedido": pedido.nro_pedido,
+                "fecha_devolucion": registro.fecha,
+                "rider_nombre": registro.id_rider,
+                "descripcion_entrega": registro.descripcion, 
+                "estado": estado_registro
+            }
+            no_entregados.append(not_delivered_data)
         elif estado_registro == "entregado":
             delivered_data = {
                 "id_pedido": pedido.id_pedido,
@@ -254,6 +262,34 @@ def crear_entrega_pedido():
     db.session.commit()
     
     return jsonify({'message':'Entrega creada con exito', 'email': envio}), 201
+
+@app.route('/delivered/not/save', methods=['POST'])
+def crear_devolucion_pedido():
+    datos_entrega = request.get_json()
+    print(datos_entrega)
+    if not datos_entrega['descripcion'] or not datos_entrega['entrega_rider'] or not datos_entrega['nro_pedido']:
+        return jsonify({'error':'Campos requeridos faltantes'}), 400
+    
+    order = Order.query.filter_by(nro_pedido = datos_entrega['nro_pedido']).first()
+    if not order:
+        return jsonify({'error':'Pedido no encontrado'}), 404
+    
+    rider = Rider.query.filter_by(id_rider = datos_entrega['entrega_rider']).first()
+    if not rider:
+        return jsonify({'error':'Rider no encontrado'}),404
+    
+    guardar_entrega = Track(
+        fecha = datetime.now(),
+        estado = "No entregado",
+        descripcion = datos_entrega['descripcion'],
+        id_rider = rider.id_rider,
+        Pedido_id_pedido = order.id_pedido
+    )
+    db.session.add(guardar_entrega)
+    envio = send_mail_not_delivered(order, guardar_entrega)
+    db.session.commit()
+    
+    return jsonify({'message':'Devolucion creada con exito', 'email': envio}), 201
     
 
 with app.app_context():

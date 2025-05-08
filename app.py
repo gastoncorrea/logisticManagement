@@ -95,7 +95,7 @@ def recuper_pedidos(estado):
                 "fecha_entrega": registro.fecha,
                 "recibe_dni": registro.entrega_dni,
                 "recibe_nombre": registro.entrega_nombre,
-                "rider_nombre": registro.id_rider,
+                "rider_nombre": registro.riders.email,
                 "descripcion_entrega": registro.descripcion,
                 "estado": estado_registro
             }

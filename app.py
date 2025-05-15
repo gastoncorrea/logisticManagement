@@ -23,6 +23,12 @@ MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER")
 MAIL_SERVER = os.getenv("MAIL_SERVER")
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+print("📦 MAIL_SERVER:", os.getenv("MAIL_SERVER"))
+print("📦 MAIL_USERNAME:", os.getenv("MAIL_USERNAME"))
+print("📦 MAIL_PASSWORD:", "SET" if os.getenv("MAIL_PASSWORD") else "NOT SET")
+print("📦 DATABASE_URL:", os.getenv("DATABASE_URL"))
+
+
 
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -36,6 +42,11 @@ app.config["MAIL_PASSWORD"] = MAIL_PASSWORD
 app.config["MAIL_DEFAULT_SENDER"] = MAIL_DEFAULT_SENDER
 db.init_app(app)
 CORS(app)
+
+print("DEBUG MAIL CONFIG:")
+print("MAIL_SERVER:", app.config["MAIL_SERVER"])
+print("MAIL_USERNAME:", app.config["MAIL_USERNAME"])
+print("MAIL_PASSWORD:", "SET" if app.config["MAIL_PASSWORD"] else "NOT SET")
 
 mail.init_app(app)
 

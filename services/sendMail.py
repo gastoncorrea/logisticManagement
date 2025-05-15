@@ -19,11 +19,10 @@ def send_mails(pedido):
                 ¡Gracias por tu compra!
 
                 Saludos,
-                Logistica ALE GARCIA
+                SkyFlex Logistica.
                 """
             )
             conn.send(msg)
-            print(f"Correo enviado a: {pedido.cliente.email}")
 
     return "Correos enviados"
 
@@ -32,7 +31,7 @@ def send_mail_shipping(pedido):
     with mail.connect() as conn:
             msg = Message(
                 subject="Se entregara hoy su Pedido",
-                recipients=["sgarcia90.912@gmail.com"],
+                recipients=[[pedido.cliente.email]],
                 body=f"""
                 Hola {pedido.cliente.nombre},
 
@@ -46,7 +45,6 @@ def send_mail_shipping(pedido):
                 """
             )
             conn.send(msg)
-            print(f"Correo enviado a: {pedido.cliente.email}")
 
     return f"Correos enviados a: {pedido.cliente.email}"
 
@@ -55,12 +53,12 @@ def send_mail_delivered(pedido, receive):
     with mail.connect() as conn:
             msg = Message(
                 subject="Su pedido ya fue entregado",
-                recipients=["sgarcia90.912@gmail.com"],
+                recipients=[[pedido.cliente.email]],
                 body=f"""
                 Hola {pedido.cliente.nombre},
 
                 Tu pedido número {pedido.nro_pedido} fue entregado en la direccion proporcionada
-                y fue recibido por {receive.entrega_nombre}, Dni: {receive.entrega_dni}.
+                y fue recibido por {receive.entrega_nombre} con Dni: {receive.entrega_dni}.
 
                 ¡Gracias por tu compra!
 
@@ -69,7 +67,6 @@ def send_mail_delivered(pedido, receive):
                 """
             )
             conn.send(msg)
-            print(f"Correo enviado a: {pedido.cliente.email}")
 
     return f"Correos enviados a: {pedido.cliente.email}"
 
@@ -78,12 +75,12 @@ def send_mail_not_delivered(pedido, receive):
     with mail.connect() as conn:
             msg = Message(
                 subject="Su pedido no fue entregado",
-                recipients=["sgarcia90.912@gmail.com"],
+                recipients=[[pedido.cliente.email]],
                 body=f"""
                 Hola {pedido.cliente.nombre},
 
                 Tu pedido número {pedido.nro_pedido} no pudo ser entregado en la direccion proporcionada
-                por motivos {receive.descripcion}.
+                por el siguiente motivo: {receive.descripcion}.
 
                 ¡Comunicate con nosotros para saber los pasos a seguir!
 
@@ -92,6 +89,5 @@ def send_mail_not_delivered(pedido, receive):
                 """
             )
             conn.send(msg)
-            print(f"Correo enviado a: {pedido.cliente.email}")
 
     return f"Correos enviados a: {pedido.cliente.email}"

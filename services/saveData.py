@@ -64,10 +64,10 @@ def saveDataDb(filteredData):
                 estado = "En proceso",
                 Pedido_id_pedido = order.id_pedido
             )
+            send_mails(order)
             db.session.add(track)
             db.session.commit()
             print("****ESTO CONTIENE ORDER ANTES DE MANDAR EL EMAIL: ",order)
-            send_mails(order)
             
             registros_guardados+=1
         else:

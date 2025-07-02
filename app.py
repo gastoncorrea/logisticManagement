@@ -15,7 +15,11 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-load_dotenv()  # Carga las variables del .env
+load_dotenv(override=True)  # Carga las variables del .env
+
+from pathlib import Path
+print("📁 Working directory:", Path.cwd())
+print(".env exists:", Path(".env").exists())
 
 MAIL_USERNAME = os.getenv("MAIL_USERNAME")
 MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")

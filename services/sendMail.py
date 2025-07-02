@@ -9,12 +9,14 @@ def send_mails(pedido):
     with mail.connect() as conn:
             msg = Message(
                 subject="Confirmación de Pedido",
-                recipients=[pedido.cliente.email],
+                recipients=["sgarcia90.912@gmail.com"],
                 body=f"""
                 Hola {pedido.cliente.nombre},
 
                 Tu pedido número {pedido.nro_pedido} ha sido registrado correctamente. 
                 Pronto será enviado a la dirección proporcionada.
+                
+                
 
                 ¡Gracias por tu compra!
 
@@ -31,7 +33,7 @@ def send_mail_shipping(pedido):
     with mail.connect() as conn:
             msg = Message(
                 subject="Se entregara hoy su Pedido",
-                recipients=[[pedido.cliente.email]],
+                recipients=["sgarcia90.912@gmail.com"],
                 body=f"""
                 Hola {pedido.cliente.nombre},
 
@@ -53,7 +55,7 @@ def send_mail_delivered(pedido, receive):
     with mail.connect() as conn:
             msg = Message(
                 subject="Su pedido ya fue entregado",
-                recipients=[[pedido.cliente.email]],
+                recipients=["sgarcia90.912@gmail.com"],
                 body=f"""
                 Hola {pedido.cliente.nombre},
 
@@ -75,7 +77,7 @@ def send_mail_not_delivered(pedido, receive):
     with mail.connect() as conn:
             msg = Message(
                 subject="Su pedido no fue entregado",
-                recipients=[[pedido.cliente.email]],
+                recipients=["sgarcia90.912@gmail.com"],
                 body=f"""
                 Hola {pedido.cliente.nombre},
 

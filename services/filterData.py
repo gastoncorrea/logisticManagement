@@ -17,15 +17,15 @@ def filterData(request):
     datos = pd.read_csv(io.StringIO(file_contents))
     datos['FECHA'] = pd.to_datetime(datos['FECHA'], format='%d/%m/%Y', errors='coerce')
     datos = datos.dropna(subset=['FECHA'])
-    datos['CANTIDAD'].replace([np.nan, np.inf, -np.inf], 0, inplace=True)
+    datos['CANTIDAD'] = datos['CANTIDAD'].replace([np.nan, np.inf, -np.inf], 0)
     datos['CANTIDAD'] = datos['CANTIDAD'].astype(int)
-    columnas_seleccionadas = ['FECHA','NRO DE PEDIDO','NOMBRE','CANTIDAD','Producto','PROVINCIA','DIRECCION', 'CP','NUMERO','MAIL']
+    columnas_seleccionadas = ['FECHA','NRO DE PEDIDO','NOMBRE','CANTIDAD','PRODUCTO','PROVINCIA','DIRECCION', 'CP','NUMERO','MAIL']
     datos_seleccionados = datos[columnas_seleccionadas]
     datos_seleccionados = datos_seleccionados.rename(columns={
         'NRO DE PEDIDO': 'Nro pedido',
         'NOMBRE': 'Nombre',
         'FECHA': 'Fecha',
-        'Producto': 'Producto',
+        'PRODUCTO': 'Producto',
         'CANTIDAD': 'Cantidad',
         'NUMERO': 'Telefono',
         'PROVINCIA': 'Ciudad',

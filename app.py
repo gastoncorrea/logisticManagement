@@ -45,7 +45,10 @@ app.config["MAIL_USERNAME"] = MAIL_USERNAME
 app.config["MAIL_PASSWORD"] = MAIL_PASSWORD
 app.config["MAIL_DEFAULT_SENDER"] = MAIL_DEFAULT_SENDER
 db.init_app(app)
-CORS(app)
+
+CORS(app, resources= {
+    r"/upload": {"origins": "https://skyflexshipping.netlify.app"}
+})
 
 print("DEBUG MAIL CONFIG:")
 print("MAIL_SERVER:", app.config["MAIL_SERVER"])
